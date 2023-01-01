@@ -44,7 +44,7 @@ fn resume_item(state: ResumeItemState) -> View<G> {
 
     match state.variant {
         ResumeItemVariant::ImageLeft => view! {
-            div(class="resume-item flex max-w-5xl mx-auto my-16 items-center") {
+            div(class="resume-item flex max-w-5xl mx-auto my-10 lg:my-16 items-center flex-col-reverse lg:flex-row") {
                 div(class="resume-item__image-container basis-6/6 md:basis-3/6 ") {
                     img(class="resume-item--image ml-auto ml-5", src=state.image)
                 }
@@ -57,7 +57,7 @@ fn resume_item(state: ResumeItemState) -> View<G> {
             }
         },
         ResumeItemVariant::ImageRight => view! {
-            div(class="resume-item flex max-w-5xl mx-auto my-16 items-center") {
+            div(class="resume-item flex max-w-5xl mx-auto my-10 lg:my-16 items-center flex-col lg:flex-row") {
                 div(class="resume-item__content basis-6/6 md:basis-3/6 ml-5") {
                     h2(class="resume-item--title text-4xl mb-4") { (state.title) }
                     p(class="resume-item--description my-5") {(description)}
@@ -75,6 +75,7 @@ fn resume_item(state: ResumeItemState) -> View<G> {
 #[perseus::make_rx(IndexPageStateRx)]
 pub struct IndexPageState {
     pub name: String,
+    pub logo: String,
     pub subtext: String,
     pub items: Vec<ResumeItemState>,
 }
@@ -83,8 +84,10 @@ pub struct IndexPageState {
 pub fn index_page(state: IndexPageStateRx) -> View<G> {
     view! {
         div(class="container mx-auto") {
-            h1(class="my-10 text-center text-5xl") { (state.name.get()) }
-            p(class="my-10 text-center text-1xl max-w-5xl mx-auto") { (state.subtext.get()) }
+            div(class="mb-7 lg:mb-10") {
+                img(src=state.logo.get(), alt="Logo of vpurush", class="w-2/3 lg:w-1/3 p-4 mx-auto")
+            }
+            p(class="my-7 lg:my-10 px-5 text-center text-1xl max-w-5xl mx-auto") { (state.subtext.get()) }
             Keyed( KeyedProps {
                     iterable: state.items.handle(),
                     template: |item| view! {
@@ -110,6 +113,22 @@ pub fn head(_props: IndexPageState) -> View<SsrNode> {
         title { "Resume | Vijay Purush" }
         link (href="/.perseus/static/main.css", rel="stylesheet")
         script(src="https://cdn.tailwindcss.com")
+        meta(itemprop="name", content="Vijay Purush's profile")
+        meta(itemprop="description", content="Vijay is a continuous learner with a facination for underlying technology more than its applications.")
+        meta(itemprop="image", content="https://profile.vpurush.com/.perseus/static/vpurush.png")
+        link (rel="canonical", href="https://profile.vpurush.com")
+        meta(property="og:title", content="Vijay Purush's profile")
+        meta(property="og:type", content="profile")
+        meta(property="og:url", content="https://profile.vpurush.com")
+        meta(property="og:image", content="https://profile.vpurush.com/.perseus/static/vpurush.png")
+        meta(property="og:description", content="Vijay is a continuous learner with a facination for underlying technology more than its applications")
+        script(type="application/ld+json"){ "{
+            \"@context\": \"http://schema.org/\",
+            \"@type\": \"Person\",
+            \"name\": \"Vijay Purush\",
+            \"jobTitle\": \"Software developer\",
+            \"url\": \"https://profile.vpurush.com\"
+          }"}
     }
 }
 
@@ -120,6 +139,7 @@ pub async fn get_build_state(
 ) -> RenderFnResultWithCause<IndexPageState> {
     Ok(IndexPageState {
         name: "Vijay Purush".to_string(),
+        logo: "/.perseus/static/vpurush.png".to_string(),
         subtext: "I hope this page categorically expounds my take on various aspects of development and thereby presents my experience. This is by no means an exhaustive list of technologies I have worked on in the past, just the recent ones.".to_string(),
         items: vec![ResumeItemState {
             title: "Programming languages".to_string(),
@@ -198,7 +218,7 @@ pub async fn get_build_state(
                     .to_string(),
             ),
             cta: Some(ResumeItemCTAState {
-                href: "https://github.com/vpurush".to_string(),
+                href: "https://github.com/vpurush/web-resume-rust".to_string(),
                 text: "Site's github repository".to_string()
             }),
             secondary_cta: None,
