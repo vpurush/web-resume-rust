@@ -1,16 +1,43 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { WebResumeRustBucket } from "./bucket";
+import { WebResumeRustDistribution } from "./distribution";
+import { WebResumeRustZone } from "./zone";
+import { WebResumeRustCertificate } from "./certificate";
 
 export class WebResumeRustStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const rootDomainName = "vpurush.com";
+    const profileSubDomainName = "profile.vpurush.com";
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'CdkQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    const zone = new WebResumeRustZone(this, {
+      domainName: rootDomainName,
+    });
+
+    const certificate = new WebResumeRustCertificate(this, {
+      domainName: rootDomainName,
+      zone: zone.zone,
+    });
+
+    const bucket = new WebResumeRustBucket(this, {
+      bucketName: rootDomainName,
+    });
+
+    const distribution = new WebResumeRustDistribution(this, {
+      domainName: rootDomainName,
+      bucket: bucket.bucket,
+      certificate: certificate.certificate,
+    });
+
+    bucket.deploy(this, {
+      distribution: distribution.distribution,
+    });
+
+    zone.createCNAMEForRoutingSubDomainToDistribution(this, {
+      domainName: profileSubDomainName,
+      distribution: distribution.distribution,
+    });
   }
 }
