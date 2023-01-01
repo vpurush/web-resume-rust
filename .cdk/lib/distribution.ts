@@ -8,6 +8,7 @@ import { RemovalPolicy } from "aws-cdk-lib";
 
 type WebResumeRustDistrubutionProps = {
   domainName: string;
+  profileSubDomainName: string;
   bucket: s3.Bucket;
   certificate: acm.DnsValidatedCertificate;
 };
@@ -22,7 +23,7 @@ export class WebResumeRustDistribution extends Construct {
       "web-resume-rust-distribution",
       {
         defaultRootObject: "index.html",
-        domainNames: [props.domainName],
+        domainNames: [props.domainName, props.profileSubDomainName],
         minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
         defaultBehavior: {
           origin: new cloudfrontOrigins.S3Origin(props.bucket),

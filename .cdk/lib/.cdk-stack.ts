@@ -18,6 +18,7 @@ export class WebResumeRustStack extends cdk.Stack {
 
     const certificate = new WebResumeRustCertificate(this, {
       domainName: rootDomainName,
+      alternativeNames: [profileSubDomainName],
       zone: zone.zone,
     });
 
@@ -27,6 +28,7 @@ export class WebResumeRustStack extends cdk.Stack {
 
     const distribution = new WebResumeRustDistribution(this, {
       domainName: rootDomainName,
+      profileSubDomainName: profileSubDomainName,
       bucket: bucket.bucket,
       certificate: certificate.certificate,
     });

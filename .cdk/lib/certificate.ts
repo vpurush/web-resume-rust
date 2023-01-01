@@ -9,6 +9,7 @@ import { RemovalPolicy } from "aws-cdk-lib";
 
 type WebResumeRustCertificateProps = {
   domainName: string;
+  alternativeNames: string[];
   zone: route53.IHostedZone;
 };
 
@@ -22,6 +23,7 @@ export class WebResumeRustCertificate extends Construct {
       "SiteCertificate",
       {
         domainName: props.domainName,
+        subjectAlternativeNames: props.alternativeNames,
         hostedZone: props.zone,
         region: "us-east-1", // Cloudfront only checks this region for certificates.
       }
