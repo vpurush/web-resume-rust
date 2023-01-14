@@ -110,6 +110,15 @@ pub fn get_template<G: Html>() -> Template<G> {
 #[perseus::head]
 pub fn head(_props: IndexPageState) -> View<SsrNode> {
     view! {
+        script(src="https://www.googletagmanager.com/gtag/js?id=G-HX1H3KRCZ9", async="true")
+        script{ "
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-HX1H3KRCZ9');
+        "}
+
         title { "Resume | Vijay Purush" }
         link (href="/.perseus/static/main.css", rel="stylesheet")
         script(src="https://cdn.tailwindcss.com")
